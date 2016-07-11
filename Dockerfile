@@ -5,4 +5,5 @@ RUN apt-get -y update
 RUN apt-get install -y python-pip
 RUN pip install awscli --ignore-installed six
 RUN mvn clean package
-CMD aws s3 cp $CONFIG_URL/application.properties application.properties && java -jar target/mgor.webservices-1.0-SNAPSHOT.jar
+CMD aws s3 cp $cnu-2016/mgor/application.properties target/application.properties && java -jar target/mgor.webservices-1.0-SNAPSHOT.jar --spring.config.location=./target/application.properties
+
