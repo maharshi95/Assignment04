@@ -30,7 +30,7 @@ public class ProductService {
 
 	public Product getProductByProductID(Long productID) {
 		Product product = productRepository.findOne(productID);
-		if(product.isDeleted()) product = null;
+		if(product != null && product.isDeleted()) product = null;
 		return product;
 	}
 
