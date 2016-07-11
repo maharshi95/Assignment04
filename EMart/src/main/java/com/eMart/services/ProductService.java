@@ -71,7 +71,7 @@ public class ProductService {
 		Product oldProduct = getProductByProductID(productID);
 		if(oldProduct != null) {
 			oldProduct.setProductCode(product.getProductCode());
-			if(product.getDescription() == null)
+			if(product.getDescription() != null)
 				oldProduct.setDescription(product.getDescription());
 			productRepository.save(oldProduct);
 		}
