@@ -71,13 +71,10 @@ public class ProductService {
 		Product oldProduct = getProductByProductID(productID);
 		if(oldProduct != null) {
 			oldProduct.setProductCode(product.getProductCode());
-			if(product.getDescription().equals(""))
+			if(product.getDescription() == null)
 				oldProduct.setDescription(product.getDescription());
 			productRepository.save(oldProduct);
 		}
 		return oldProduct;
 	}
-
-
-
 }
