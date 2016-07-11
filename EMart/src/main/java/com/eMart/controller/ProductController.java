@@ -42,7 +42,7 @@ public class ProductController {
 			((HashMap<String,Object>) responseBody).put("detail",NOT_FOUND);
 			status = HttpStatus.NOT_FOUND;
 		}
-		return new ResponseEntity(responseBody,HttpStatus.OK);
+		return new ResponseEntity(responseBody,status);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
