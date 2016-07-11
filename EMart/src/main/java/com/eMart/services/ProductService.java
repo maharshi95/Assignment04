@@ -1,5 +1,6 @@
 package com.eMart.services;
 
+import com.eMart.exceptions.BadProductFormatException;
 import com.eMart.exceptions.ProductNotFoundException;
 import com.eMart.model.Product;
 import com.eMart.repo.ProductRepository;
@@ -23,13 +24,13 @@ public class ProductService {
 
 	public Product getProductByCode(String code) {
 		Product product = productRepository.findByCode(code);
-		if(!product.isDeleted()) product = null;
+		if(product.isDeleted()) product = null;
 		return product;
 	}
 
 	public Product getProductByProductID(Long productID) {
 		Product product = productRepository.findOne(productID);
-		if(!product.isDeleted()) product = null;
+		if(product.isDeleted()) product = null;
 		return product;
 	}
 
@@ -50,7 +51,7 @@ public class ProductService {
 			product = productRepository.save(product);
 			productID = product.getProductID();
 		} catch (RuntimeException e) {
-			throw new ProductNotFoundException(e);
+			throw new BadProductFormatException();
 		}
 		return productID;
 	}
@@ -66,15 +67,16 @@ public class ProductService {
 		return success;
 	}
 
-//	public Product updateProduct(Long productID, Product product) {
-//		Product oldProduct = getProductByProductID(productID);
-//		boolean success = false;
-//		if(oldProduct != null) {
-//
-//			success = true;
-//		}
-//		return success;
-//	}
+	public Product updateProduct(Long productID, Product product) {
+		Product oldProduct = getProductByProductID(productID);
+		if(oldProduct != null) {
+			oldProduct.setProductCode(product.getProductCode());
+			if(product.getDescription().equals(""))
+				oldProduct.setDescription(product.getDescription());
+			productRepository.save(oldProduct);
+		}
+		return oldProduct;
+	}
 
 
 
