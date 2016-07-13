@@ -69,7 +69,7 @@ public class OrderController {
 		log.info ("Requested user_name: " + userName + " recieved");
 		log.info("Calling orderService to create new order for User:" + userName);
 		Order order = orderService.createNewEmptyOrder (userName);
-		return ResponseEntity.ok(order);
+		return new ResponseEntity(order,HttpStatus.CREATED);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/{id}/orderLineItem")
