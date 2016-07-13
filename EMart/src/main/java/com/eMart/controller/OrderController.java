@@ -89,7 +89,7 @@ public class OrderController {
 		try {
 			orderItem.setSellPrice (product.getSellPrice ());
 			orderService.addItemToOrder (order, orderItem);
-			status = HttpStatus.OK;
+			status = HttpStatus.CREATED;
 		} catch (IllegalOrderModificationException e) {
 			log.error (e.getLocalizedMessage ( ));
 			status = HttpStatus.BAD_REQUEST;
