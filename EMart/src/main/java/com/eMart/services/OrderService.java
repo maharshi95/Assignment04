@@ -156,9 +156,7 @@ public class OrderService {
 	}
 
 	public Order placeOrder(Long orderID, Map<String,String> patch) throws BadOrderCreationExeption {
-		boolean success = false;
 		Order order = getActiveOrderByOrderID(orderID);
-
 		log.info ("Finding the order with order_id " + orderID);
 
 		if(order == null) {
@@ -177,6 +175,7 @@ public class OrderService {
 		String status = patch.get("status");
 		String userName = patch.get ("user_name");
 		String address = patch.get ("address");
+		boolean success = false;
 		boolean statusCheck = status != null && status.equals ("checkout");
 		if(statusCheck || true) {
 			if(userName == null) {
@@ -240,7 +239,7 @@ public class OrderService {
 		} else {
 			log.info ("Invalid status for the order " + orderID + ": " + status);
 		}
-
+		if(!success) throw new BadOrderCreationExeption ();
 		return order;
 	}
 

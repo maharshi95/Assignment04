@@ -50,6 +50,7 @@ public class OrderUtils {
 
 	public static ReceivedOrder getUIOrderInstance(Order order, String userName) {
 		ReceivedOrder uiOrder = new ReceivedOrder ();
+		uiOrder.setOrderID (order.getOrderID ());
 		uiOrder.setCustomerID (order.getCustomerID ());
 		uiOrder.setCustomerEmailID (userName);
 		uiOrder.setPaymentMode (order.getPaymentMode ().toLowerCase ());
