@@ -46,10 +46,7 @@ public class OrderController {
 		Object responseObject = null;
 		HttpStatus status = order == null ? HttpStatus.NOT_FOUND : HttpStatus.OK;
 		if(order != null) {
-			Long customerID = order.getCustomerID();
-			Customer customer = customerService.getCustomerByID (customerID);
-			String userName = customer == null ? null : customer.getFirstName ();
-			responseObject = OrderUtils.getUIOrderInstance (order,userName);
+			responseObject = OrderUtils.getUIOrderInstance (order,"");
 		}
 		return new ResponseEntity(responseObject, status);
 	}

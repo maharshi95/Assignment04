@@ -6,6 +6,7 @@ import com.eMart.exceptions.IllegalOrderModificationException;
 import com.eMart.model.*;
 import com.eMart.repo.OrderItemRepository;
 import com.eMart.repo.OrderRepository;
+import com.eMart.repo.ProductRepository;
 import com.eMart.utils.CustomerUtils;
 import com.eMart.utils.OrderUtils;
 import org.slf4j.Logger;
@@ -32,6 +33,9 @@ public class OrderService {
 
 	@Autowired
 	OrderItemRepository orderItemRepository;
+
+	@Autowired
+	ProductRepository productRepository;
 
 	@Autowired
 	CustomerService customerService;
@@ -147,12 +151,22 @@ public class OrderService {
 	public boolean isOrderValid(Order order) {
 		boolean valid = true;
 		List<OrderItem> orderItems = getOrderItemsByOrderId (order.getOrderID ());
+		List<Product> products = new ArrayList<Product> ();
 		for(int i=0; i<orderItems.size () && valid; i++) {
 			OrderItem item = orderItems.get(i);
 			Product product = productService.getProductByProductID (item.getProductID ());
+			products.add (product);
 			valid = valid && item.getQuantity () <= product.getQuantity ();
 		}
-		return true;
+		if(valid) {
+			for(int i=0; i<orderItems.size () && valid; i++) {
+				Product product = products.get (i);
+				OrderItem item = orderItems.get (i);
+				product.setQuantity (product.getQuantity () - item.getQuantity ());
+				productRepository.save (product);
+			}
+		}
+		return valid;
 	}
 
 	public Order placeOrder(Long orderID, Map<String,String> patch) throws BadOrderCreationExeption {
@@ -224,6 +238,7 @@ public class OrderService {
 						order.setCustomerID (customer.getCustomerID ( ));
 						order.setOrderStatus (OrderStatus.CHECKOUT.name ( ));
 						order = orderRepository.save (order);
+
 						success = true;
 						log.info ("Order " + orderID +" placed");
 					} else {
