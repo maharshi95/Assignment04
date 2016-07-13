@@ -42,15 +42,16 @@ public class OrderController {
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
 	public ResponseEntity<Order> get(@PathVariable(value = "id") Long id) {
 		log.info("order_id: " + id);
-		Order order = orderService.getOrderByOrderID (id);
-		HttpStatus status = HttpStatus.OK;
-		if(order == null) {
-			status = HttpStatus.NOT_FOUND;
+		Order order = orderService.getActiveOrderByOrderID(id);
+		Object responseObject = null;
+		HttpStatus status = order == null ? HttpStatus.NOT_FOUND : HttpStatus.OK;
+		if(order != null) {
+			Long customerID = order.getCustomerID();
+			Customer customer = customerService.getCustomerByID (customerID);
+			String userName = customer == null ? null : customer.getFirstName ();
+			responseObject = OrderUtils.getUIOrderInstance (order,userName);
 		}
-		else {
-			log.info(order.getDateCreated().toString());
-		}
-		return new ResponseEntity<Order>(order, status);
+		return new ResponseEntity(responseObject, status);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/items/{orderID}")
