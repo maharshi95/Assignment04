@@ -109,7 +109,7 @@ public class OrderController {
 			} else {
 				Customer c = customerService.getCustomerByID (order.getCustomerID ());
 				responseBody = OrderUtils.getUIOrderInstance (order,c.getFirstName ());
-				status = HttpStatus.OK;
+				status = HttpStatus.CREATED;
 			}
 
 		} catch (BadOrderCreationExeption e) {
