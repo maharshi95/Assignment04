@@ -100,7 +100,7 @@ public class OrderController {
 	@RequestMapping(method = RequestMethod.PATCH, value = "/{id}")
 	public ResponseEntity<?> placeOrder(@RequestBody Map<String,String> patch, @PathVariable(value = "id") Long orderID) {
 		Object responseBody = null;
-		HttpStatus status = HttpStatus.OK;
+		HttpStatus status = HttpStatus.CREATED;
 		try {
 			log.info ("Trying to place order " + orderID);
 			Order order = orderService.placeOrder (orderID,patch);
