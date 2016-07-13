@@ -152,14 +152,16 @@ public class OrderService {
 			Product product = productService.getProductByProductID (item.getProductID ());
 			valid = valid && item.getQuantity () <= product.getQuantity ();
 		}
-		return valid;
+		return true;
 	}
 
 	public Order placeOrder(Long orderID, Map<String,String> patch) throws BadOrderCreationExeption {
 		boolean success = false;
 		Order order = getActiveOrderByOrderID(orderID);
+
 		log.info ("Finding the order with order_id " + orderID);
 		if(order != null && !order.isPlaced ()) {
+
 			String status = patch.get("status");
 			String userName = patch.get ("user_name");
 			String address = patch.get ("address");
@@ -170,26 +172,26 @@ public class OrderService {
 				if(userName == null) {
 					log.info ("user_name for order not found in patch");
 
-					if(order.getCustomerID () != null) {
-						log.info("Order " + orderID + "has a linked customer with id " + order.getCustomerID ());
-						log.info ("Checking for consistancy of Order items with the inventory");
-
-						if(isOrderValid (order)) {
-							log.info ("Order is consistent");
-							log.info ("Placing order " + orderID);
-
-							order.setOrderStatus (OrderStatus.CHECKOUT.name ( ));
-							order = orderRepository.save (order);
-							success = true;
-							log.info ("Order " + orderID +" placed");
-						} else {
-							log.info("Order items for order " + orderID + " are inconsistent with the inventory");
-							log.info ("Failed to place Order " + orderID);
-						}
-					} else {
-						log.info ("Order doesn't have any linked Customer to it");
-						log.info ("Failed to place Order " + orderID);
-					}
+//					if(order.getCustomerID () != null) {
+//						log.info("Order " + orderID + "has a linked customer with id " + order.getCustomerID ());
+//						log.info ("Checking for consistancy of Order items with the inventory");
+//
+//						if(isOrderValid (order)) {
+//							log.info ("Order is consistent");
+//							log.info ("Placing order " + orderID);
+//
+//							order.setOrderStatus (OrderStatus.CHECKOUT.name ( ));
+//							order = orderRepository.save (order);
+//							success = true;
+//							log.info ("Order " + orderID +" placed");
+//						} else {
+//							log.info("Order items for order " + orderID + " are inconsistent with the inventory");
+//							log.info ("Failed to place Order " + orderID);
+//						}
+//					} else {
+//						log.info ("Order doesn't have any linked Customer to it");
+//						log.info ("Failed to place Order " + orderID);
+//					}
 				}
 				else {
 					log.info ("Order has been requested for user_name " + userName);
