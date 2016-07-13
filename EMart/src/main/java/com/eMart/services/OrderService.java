@@ -167,31 +167,31 @@ public class OrderService {
 			String address = patch.get ("address");
 			log.info ("Order found.");
 			log.info ("Request patch: " + patch);
-
-			if(status != null && status.equals ("checkout")) {
+			boolean statusCheck = status != null && status.equals ("checkout");
+			if(statusCheck || true) {
 				if(userName == null) {
 					log.info ("user_name for order not found in patch");
 
-//					if(order.getCustomerID () != null) {
-//						log.info("Order " + orderID + "has a linked customer with id " + order.getCustomerID ());
-//						log.info ("Checking for consistancy of Order items with the inventory");
-//
-//						if(isOrderValid (order)) {
-//							log.info ("Order is consistent");
-//							log.info ("Placing order " + orderID);
-//
-//							order.setOrderStatus (OrderStatus.CHECKOUT.name ( ));
-//							order = orderRepository.save (order);
-//							success = true;
-//							log.info ("Order " + orderID +" placed");
-//						} else {
-//							log.info("Order items for order " + orderID + " are inconsistent with the inventory");
-//							log.info ("Failed to place Order " + orderID);
-//						}
-//					} else {
-//						log.info ("Order doesn't have any linked Customer to it");
-//						log.info ("Failed to place Order " + orderID);
-//					}
+					if(order.getCustomerID () != null) {
+						log.info("Order " + orderID + "has a linked customer with id " + order.getCustomerID ());
+						log.info ("Checking for consistancy of Order items with the inventory");
+
+						if(isOrderValid (order)) {
+							log.info ("Order is consistent");
+							log.info ("Placing order " + orderID);
+
+							order.setOrderStatus (OrderStatus.CHECKOUT.name ( ).toLowerCase ());
+							order = orderRepository.save (order);
+							success = true;
+							log.info ("Order " + orderID +" placed");
+						} else {
+							log.info("Order items for order " + orderID + " are inconsistent with the inventory");
+							log.info ("Failed to place Order " + orderID);
+						}
+					} else {
+						log.info ("Order doesn't have any linked Customer to it");
+						log.info ("Failed to place Order " + orderID);
+					}
 				}
 				else {
 					log.info ("Order has been requested for user_name " + userName);
