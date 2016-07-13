@@ -160,88 +160,87 @@ public class OrderService {
 		Order order = getActiveOrderByOrderID(orderID);
 
 		log.info ("Finding the order with order_id " + orderID);
-		if(order != null && !order.isPlaced ()) {
 
-			String status = patch.get("status");
-			String userName = patch.get ("user_name");
-			String address = patch.get ("address");
-			log.info ("Order found.");
-			log.info ("Request patch: " + patch);
-			boolean statusCheck = status != null && status.equals ("checkout");
-			if(statusCheck || true) {
-				if(userName == null) {
-					log.info ("user_name for order not found in patch");
+		if(order == null) {
+			log.info ("Order not found for order_id: " + orderID);
+			return order;
+		}
 
-					if(order.getCustomerID () != null) {
-						log.info("Order " + orderID + "has a linked customer with id " + order.getCustomerID ());
-						log.info ("Checking for consistancy of Order items with the inventory");
+		if(order.isPlaced ()) {
+			log.info ("Attempt to place an already placed order");
+			throw new BadOrderCreationExeption ();
+		}
 
-						if(isOrderValid (order)) {
-							log.info ("Order is consistent");
-							log.info ("Placing order " + orderID);
+		log.info ("Order found.");
+		log.info ("Request patch: " + patch);
 
-							order.setOrderStatus (OrderStatus.CHECKOUT.name ( ).toLowerCase ());
-							order = orderRepository.save (order);
-							success = true;
-							log.info ("Order " + orderID +" placed");
-						} else {
-							log.info("Order items for order " + orderID + " are inconsistent with the inventory");
-							log.info ("Failed to place Order " + orderID);
-						}
+		String status = patch.get("status");
+		String userName = patch.get ("user_name");
+		String address = patch.get ("address");
+		boolean statusCheck = status != null && status.equals ("checkout");
+		if(statusCheck || true) {
+			if(userName == null) {
+//				log.info ("user_name for order not found in patch");
+//
+//				if(order.getCustomerID () != null) {
+//					log.info("Order " + orderID + "has a linked customer with id " + order.getCustomerID ());
+//					log.info ("Checking for consistancy of Order items with the inventory");
+//
+//					if(isOrderValid (order)) {
+//						log.info ("Order is consistent");
+//						log.info ("Placing order " + orderID);
+//
+//						order.setOrderStatus (OrderStatus.CHECKOUT.name ( ).toLowerCase ());
+//						order = orderRepository.save (order);
+//						success = true;
+//						log.info ("Order " + orderID +" placed");
+//					} else {
+//						log.info("Order items for order " + orderID + " are inconsistent with the inventory");
+//						log.info ("Failed to place Order " + orderID);
+//					}
+//				} else {
+//					log.info ("Order doesn't have any linked Customer to it");
+//					log.info ("Failed to place Order " + orderID);
+//				}
+			}
+			else {
+				log.info ("Order has been requested for user_name " + userName);
+				Customer customer = customerService.getCustomerByUserName (userName);
+				if(customer == null) {
+					log.info ("Customer with user_name " + userName + " doesnt exist");
+					customer = customerService.createNewCustomer (userName);
+					log.info ("Creating a new customer with user_name " + userName);
+				}
+				log.info ("CustomerID of " + userName + " : " + customer.getCustomerID ());
+				if(order.getCustomerID () == null || order.getCustomerID ().equals (customer.getCustomerID ())) {
+					if(order.getCustomerID () == null) {
+						log.info ("patching customerID " + customer.getCustomerID () + " to the order");
 					} else {
-						log.info ("Order doesn't have any linked Customer to it");
+						log.info("customerID " + customer.getCustomerID () + " is already patched to the order");
+					}
+					log.info ("Checking for consistancy of Order items with the inventory");
+					if(isOrderValid(order)) {
+						log.info ("Order is consistent");
+						log.info ("Placing order " + orderID);
+						order.setCustomerID (customer.getCustomerID ( ));
+						order.setOrderStatus (OrderStatus.CHECKOUT.name ( ));
+						order = orderRepository.save (order);
+						success = true;
+						log.info ("Order " + orderID +" placed");
+					} else {
+						log.info("Order items for order " + orderID + " are inconsistent with the inventory");
 						log.info ("Failed to place Order " + orderID);
 					}
+				} else {
+					log.info ("CustomerID conflict for order " + orderID);
+					log.info ("Requested patch CustomerID " + customer.getCustomerID () + " != existing customerID " + order.getCustomerID ());
+					log.info ("Failed to place Order " + orderID);
 				}
-				else {
-					log.info ("Order has been requested for user_name " + userName);
-					Customer customer = customerService.getCustomerByUserName (userName);
-					if(customer == null) {
-						log.info ("Customer with user_name " + userName + " doesnt exist");
-						customer = customerService.createNewCustomer (userName);
-						log.info ("Creating a new customer with user_name " + userName);
-					}
-					log.info ("CustomerID of " + userName + " : " + customer.getCustomerID ());
-					if(order.getCustomerID () == null || order.getCustomerID ().equals (customer.getCustomerID ())) {
-						if(order.getCustomerID () == null) {
-							log.info ("patching customerID " + customer.getCustomerID () + " to the order");
-						} else {
-							log.info("customerID " + customer.getCustomerID () + " is already patched to the order");
-						}
-						log.info ("Checking for consistancy of Order items with the inventory");
-						if(isOrderValid(order)) {
-							log.info ("Order is consistent");
-							log.info ("Placing order " + orderID);
-							order.setCustomerID (customer.getCustomerID ( ));
-							order.setOrderStatus (OrderStatus.CHECKOUT.name ( ));
-							order = orderRepository.save (order);
-							success = true;
-							log.info ("Order " + orderID +" placed");
-						} else {
-							log.info("Order items for order " + orderID + " are inconsistent with the inventory");
-							log.info ("Failed to place Order " + orderID);
-						}
-					} else {
-						log.info ("CustomerID conflict for order " + orderID);
-						log.info ("Requested patch CustomerID " + customer.getCustomerID () + " != existing customerID " + order.getCustomerID ());
-						log.info ("Failed to place Order " + orderID);
-					}
-				}
-			} else {
-				log.info ("Invalid status for the order " + orderID + ": " + status);
 			}
-			if(success == false){
-				throw new BadOrderCreationExeption ();
-			}
+		} else {
+			log.info ("Invalid status for the order " + orderID + ": " + status);
 		}
-		if(success == false){
-			if(order == null) {
-				log.info ("Order not found for order_id: " + orderID);
-			} else {
-				log.info ("Attempt to place an already placed order");
-				throw new BadOrderCreationExeption ();
-			}
-		}
+
 		return order;
 	}
 
