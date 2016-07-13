@@ -5,6 +5,8 @@ import com.eMart.exceptions.ProductNotFoundException;
 import com.eMart.model.Product;
 import com.eMart.repo.ProductRepository;
 import com.eMart.services.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,8 @@ public class ProductController {
 
 	private final static String NOT_FOUND = "Not Found.";
 
+	private final static Logger log = LoggerFactory.getLogger(ProductController.class);
+
 	@Autowired
 	ProductRepository productRepository;
 
@@ -30,7 +34,9 @@ public class ProductController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List> getAll() {
-		return new ResponseEntity<List>(productService.getAllProducts(),HttpStatus.OK);
+		List<Product> products = productService.getAllProducts();
+		log.info("Total Products:" + products.size());
+		return new ResponseEntity<List>(products,HttpStatus.OK);
 	}
 
 	@RequestMapping(method = RequestMethod.GET,value = "/{id}")

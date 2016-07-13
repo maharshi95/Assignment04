@@ -12,4 +12,7 @@ public interface CustomerRepository extends CrudRepository<Customer,Long> {
 	@Query("select c from Customer c where c.emailID = ?1")
 	public Customer getByEmailID(String emailID);
 
+	@Query("select c from Customer c where c.firstName = ?1")
+	public Customer getByUserName(String userName);
+
 }

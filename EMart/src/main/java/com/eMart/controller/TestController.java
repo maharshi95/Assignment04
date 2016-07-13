@@ -1,8 +1,10 @@
 package com.eMart.controller;
 
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.model.CreateQueueResult;
 import com.eMart.model.Customer;
 import com.eMart.model.OrderItem;
-import com.eMart.model.Product;
+import com.eMart.services.SQSUtils;
 import com.eMart.services.CustomerService;
 import com.eMart.services.OrderService;
 import com.eMart.services.ProductService;
@@ -56,4 +58,22 @@ public class TestController {
 		return orderService.getOrderItems(id);
 	}
 
+
+	@RequestMapping(value = "/sqs/create/{id}")
+	public void qtest(@PathVariable(value = "id") Long id) {
+		log.info ("Creating SQS Service instance");
+		SQSUtils SQSUtils = new SQSUtils ();
+		log.info ("Sending Message");
+		SQSUtils.sendMessage ("This a test Message #"+id);
+		log.info ("Message sent");
+	}
+
+	@RequestMapping(value = "/sqs/create/{name}")
+	public void sqsTest(@PathVariable(value = "name")String queueName) {
+		log.info ("Creating SQS");
+		AmazonSQS sqs = SQSUtils.getClient ();
+		log.info ("Creating Queue");
+		CreateQueueResult rs = sqs.createQueue(queueName);
+		log.info ("Queue creation result: " + rs.toString () + "");
+	}
 }

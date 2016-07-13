@@ -1,5 +1,7 @@
 package com.eMart.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 /**
@@ -7,19 +9,36 @@ import java.util.List;
  */
 public class ReceivedOrder {
 
-	private long customerEmailID;
+	@JsonProperty(value = "id")
+	private Long orderID;
 
+	@JsonProperty(value = "customer_id")
+	private Long customerID;
+
+	@JsonProperty(value = "user_name")
+	private String customerEmailID;
+
+	@JsonProperty(value = "mode")
 	private String paymentMode;
+
+	@JsonProperty(value = "status")
+	private String status;
 
 	private List<ReceivedOrderItem> products;
 
-	
-
-	public long getCustomerEmailID() {
+	public String getCustomerEmailID() {
 		return customerEmailID;
 	}
 
-	public void setCustomerEmailID(long customerEmailID) {
+	public Long getCustomerID() {
+		return customerID;
+	}
+
+	public void setCustomerID(Long customerID) {
+		this.customerID = customerID;
+	}
+
+	public void setCustomerEmailID(String customerEmailID) {
 		this.customerEmailID = customerEmailID;
 	}
 
@@ -37,5 +56,21 @@ public class ReceivedOrder {
 
 	public void setProducts(List<ReceivedOrderItem> products) {
 		this.products = products;
+	}
+
+	public Long getOrderID() {
+		return orderID;
+	}
+
+	public void setOrderID(Long orderID) {
+		this.orderID = orderID;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

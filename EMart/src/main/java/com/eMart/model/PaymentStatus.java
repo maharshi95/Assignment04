@@ -5,5 +5,9 @@ package com.eMart.model;
  */
 public enum PaymentStatus {
 	RECIEVED,
-	NOT_RECIEVED
+	NOT_RECIEVED;
+
+	public static final PaymentStatus getDefaultStatus() {
+		return PaymentStatus.NOT_RECIEVED;
+	}
 }

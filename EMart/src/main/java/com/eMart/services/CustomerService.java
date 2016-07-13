@@ -4,6 +4,7 @@ import com.eMart.model.Address;
 import com.eMart.model.Customer;
 import com.eMart.repo.AddressRepository;
 import com.eMart.repo.CustomerRepository;
+import com.eMart.utils.CustomerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,11 @@ public class CustomerService {
 		return customer;
 	}
 
+	public Customer getCustomerByUserName(String userName) {
+		Customer customer = customerRepository.getByUserName(userName);
+		return customer;
+	}
+
 	public Customer getCustomerByID(Long id) {
 		return customerRepository.findOne(id);
 	}
@@ -56,5 +62,15 @@ public class CustomerService {
 			address = addressRepository.findOne(addressID);
 		}
 		return address;
+	}
+
+	public Customer createNewCustomer(Customer customer) {
+		Customer savedCustomer = customerRepository.save (customer);
+		return savedCustomer;
+	}
+
+	public Customer createNewCustomer(String userName) {
+		Customer savedCustomer = customerRepository.save (CustomerUtils.createNewCustomer (userName));
+		return savedCustomer;
 	}
 }

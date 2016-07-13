@@ -5,5 +5,9 @@ package com.eMart.model;
  */
 public enum PaymentMode {
 	ONLINE,
-	COD
+	COD;
+
+	public static final PaymentMode getDefaultPaymentMode() {
+		return PaymentMode.COD;
+	}
 }

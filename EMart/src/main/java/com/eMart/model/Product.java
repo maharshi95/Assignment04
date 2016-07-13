@@ -32,6 +32,7 @@ public class Product {
 	@Column(name = "description")
 	private String description;
 
+	@JsonProperty(value = "qty")
 	@Column(name = "quantity")
 	private long quantity;
 
